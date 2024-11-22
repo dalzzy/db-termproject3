@@ -1,6 +1,7 @@
 package backend.user;
 
 public class UserDTO {
+	
 	private int userId;
 	private String name;
 	private String email;
