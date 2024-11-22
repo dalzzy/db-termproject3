@@ -1,7 +1,6 @@
 package backend.comment;
 
 public class CommentDTO {
-	
 	private int commentId;
     private int userId;
     private int postId;
