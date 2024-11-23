@@ -1,124 +1,82 @@
 package backend.db;
 
-import java.sql.*;
-import java.util.Properties;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public class DatabaseManager {
-    private static DatabaseManager instance;
-    private Connection connection;
-    private String url;
-    private String username;
-    private String password;
+   private static DatabaseManager instance;
+   private Connection connection;
+   private String url;
+   private String username;
+   private String password;
 
-    // Private constructor to enforce Singleton pattern
-    private DatabaseManager() {
-        try {
-            // Load properties from db.properties file
-            Properties properties = new Properties();
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("backend/db/db.properties");
-            if (inputStream == null) {
-                throw new RuntimeException("Cannot find db.properties file");
-            }
-            properties.load(inputStream);
+   private DatabaseManager() {
+      try {
+         Properties var1 = new Properties();
+         InputStream var2 = this.getClass().getClassLoader().getResourceAsStream("backend/db/db.properties");
+         if (var2 == null) {
+            throw new RuntimeException("Cannot find db.properties file");
+         } else {
+            var1.load(var2);
+            this.url = var1.getProperty("db.url");
+            this.username = var1.getProperty("db.username");
+            this.password = var1.getProperty("db.password");
+            Class.forName(var1.getProperty("db.driver"));
+         }
+      } catch (Exception var3) {
+         var3.printStackTrace();
+         throw new RuntimeException("Failed to initialize DatabaseManager");
+      }
+   }
 
-            this.url = properties.getProperty("db.url");
-            this.username = properties.getProperty("db.username");
-            this.password = properties.getProperty("db.password");
+   public static DatabaseManager getInstance() {
+      if (instance == null) {
+         instance = new DatabaseManager();
+      }
 
-            // Load JDBC driver
-            Class.forName(properties.getProperty("db.driver"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to initialize DatabaseManager");
-        }
-    }
+      return instance;
+   }
 
-    // Singleton instance
-    public static DatabaseManager getInstance() {
-        if (instance == null) {
-            instance = new DatabaseManager();
-        }
-        return instance;
-    }
+   public Connection getConnection() {
+      try {
+         if (this.connection == null || this.connection.isClosed()) {
+            this.connection = DriverManager.getConnection(this.url, this.username, this.password);
+         }
+      } catch (SQLException var2) {
+         var2.printStackTrace();
+         throw new RuntimeException("Failed to establish database connection");
+      }
 
-    // Get database connection
-    public Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(url, username, password);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to establish database connection");
-        }
-        return connection;
-    }
+      return this.connection;
+   }
 
-    // Close database connection
-    public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed successfully.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+   public void closeConnection() {
+      try {
+         if (this.connection != null && !this.connection.isClosed()) {
+            this.connection.close();
+            System.out.println("Database connection closed successfully.");
+         }
+      } catch (SQLException var2) {
+         var2.printStackTrace();
+      }
 
-    // Method to add a user to the User table
-    public void addUser(String name, String email, String password) {
-        String query = "INSERT INTO User (name, email, password) VALUES (?, ?, ?)";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, name);
-            stmt.setString(2, email);
-            stmt.setString(3, password);
-            stmt.executeUpdate();
-            System.out.println("User added successfully!");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+   }
 
-    // Method to retrieve all users from the User table
-    public void getAllUsers() {
-        String query = "SELECT * FROM User"; // SQL query to get all users
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-            while (rs.next()) {
-                int userId = rs.getInt("userId");
-                String name = rs.getString("name");
-                String email = rs.getString("email");
-                System.out.println("ID: " + userId + ", Name: " + name + ", Email: " + email);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+   public static void main(String[] var0) {
+      System.out.println("Testing DatabaseManager...");
+      DatabaseManager var1 = getInstance();
 
-    // Main method for testing
-    public static void main(String[] args) {
-        System.out.println("Testing DatabaseManager...");
+      try {
+         Connection var2 = var1.getConnection();
+         System.out.println("Database connection successful!");
+      } catch (Exception var6) {
+         var6.printStackTrace();
+      } finally {
+         var1.closeConnection();
+      }
 
-        DatabaseManager manager = DatabaseManager.getInstance();
-        try {
-            // Test database connection
-            Connection connection = manager.getConnection();
-            System.out.println("Database connection successful!");
-
-            // Insert users into User table
-            manager.addUser("John Doe", "john@example.com", "password123");
-            manager.addUser("Jane Doe", "jane@example.com", "password456");
-
-            // Retrieve all users from the User table
-            manager.getAllUsers();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Close the connection
-            manager.closeConnection();
-        }
-    }
+   }
 }
