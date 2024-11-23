@@ -11,40 +11,42 @@ import java.awt.event.ActionListener;
 public class NavBar extends JPanel {
     private JFrame parentFrame;
 
-    // NavBar 생성자: JFrame 객체를 인자로 받음
     public NavBar(JFrame parentFrame) {
         this.parentFrame = parentFrame;
+
+        // NavBar 속성 설정
         setPreferredSize(new Dimension(200, 0));
         setBackground(Color.BLACK);
-
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        add(Box.createVerticalStrut(20));
-
-        // X 로고 추가
+        // 로고 위치 조정 (최상단에 배치)
+        add(Box.createVerticalStrut(20)); // NavBar 상단 여백
         JLabel logo = createLogo();
         logo.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(logo);
 
-        add(Box.createVerticalStrut(30)); // 로고 아래 여백
+        // 로고 아래 여백
+        add(Box.createVerticalStrut(30));
 
-        // "Home" 버튼
+        // Home 버튼 추가
         JButton homeButton = createMenuButton("Home", () -> {
-            parentFrame.dispose(); // 현재 프레임 닫기
-            new HomePage(); // HomePage 열기
+            parentFrame.dispose();
+            new HomePage();
         });
         add(homeButton);
 
-        add(Box.createVerticalStrut(15)); // 버튼 간격
+        // 버튼 간격
+        add(Box.createVerticalStrut(15));
 
-        // "Profile" 버튼
+        // Profile 버튼 추가
         JButton profileButton = createMenuButton("Profile", () -> {
-            parentFrame.dispose(); // 현재 프레임 닫기
-            new MyPage(); // MyPage 열기
+            parentFrame.dispose();
+            new MyPage();
         });
         add(profileButton);
 
-        add(Box.createVerticalGlue()); // 남은 공간 아래로 밀기
+        // NavBar 하단 여백 추가
+        add(Box.createVerticalGlue());
     }
 
     // 로고 생성 메서드
