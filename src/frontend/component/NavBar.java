@@ -1,10 +1,19 @@
 package frontend.component;
 
+import frontend.page.HomePage;
+import frontend.page.MyPage;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class NavBar extends JPanel {
-    public NavBar() {
+    private JFrame parentFrame;
+
+    // NavBar 생성자: JFrame 객체를 인자로 받음
+    public NavBar(JFrame parentFrame) {
+        this.parentFrame = parentFrame;
         setPreferredSize(new Dimension(200, 0));
         setBackground(Color.BLACK);
 
@@ -19,14 +28,20 @@ public class NavBar extends JPanel {
 
         add(Box.createVerticalStrut(30)); // 로고 아래 여백
 
-
-        JButton homeButton = createMenuButton("Home");
+        // "Home" 버튼
+        JButton homeButton = createMenuButton("Home", () -> {
+            parentFrame.dispose(); // 현재 프레임 닫기
+            new HomePage(); // HomePage 열기
+        });
         add(homeButton);
 
         add(Box.createVerticalStrut(15)); // 버튼 간격
 
         // "Profile" 버튼
-        JButton profileButton = createMenuButton("Profile");
+        JButton profileButton = createMenuButton("Profile", () -> {
+            parentFrame.dispose(); // 현재 프레임 닫기
+            new MyPage(); // MyPage 열기
+        });
         add(profileButton);
 
         add(Box.createVerticalGlue()); // 남은 공간 아래로 밀기
@@ -34,17 +49,15 @@ public class NavBar extends JPanel {
 
     // 로고 생성 메서드
     private JLabel createLogo() {
-        // assets 폴더에 있는 로고 파일 경로
-        String logoPath = "/frontend/assets/XLogo.png";
+        String logoPath = "src/frontend/assets/XLogo.png";
 
-        // 이미지 로드
         ImageIcon logoIcon = new ImageIcon(logoPath);
         Image logoImage = logoIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH); // 크기 조정
         return new JLabel(new ImageIcon(logoImage)); // JLabel로 반환
     }
 
     // 메뉴 버튼 생성 메서드
-    private JButton createMenuButton(String text) {
+    private JButton createMenuButton(String text, Runnable onClickAction) {
         JButton button = new JButton(text);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setBackground(Color.BLACK);
@@ -67,6 +80,14 @@ public class NavBar extends JPanel {
             public void mouseExited(java.awt.event.MouseEvent e) {
                 button.setBackground(Color.BLACK); // 원래 배경색으로 복귀
                 button.setForeground(Color.WHITE); // 텍스트 색 복귀
+            }
+        });
+
+        // 버튼 클릭 이벤트 추가
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onClickAction.run(); // 전달된 동작 실행
             }
         });
 

@@ -20,7 +20,7 @@ public class HomePage extends JFrame {
         setLayout(new BorderLayout());
 
         // NavBar
-        NavBar navBar = new NavBar();
+        NavBar navBar = new NavBar(this);
         add(navBar, BorderLayout.WEST);
 
         // 상단 게시물 작성 영역
