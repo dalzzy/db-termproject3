@@ -13,7 +13,7 @@ public class PostItem extends JPanel {
         // 사용자 이름
         JLabel userLabel = new JLabel(username);
         userLabel.setForeground(Color.WHITE);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        userLabel.setFont(new Font("Arial", Font.BOLD, 24));
         add(userLabel, BorderLayout.NORTH);
 
         // 게시물 내용
@@ -22,7 +22,7 @@ public class PostItem extends JPanel {
         contentArea.setWrapStyleWord(true);
         contentArea.setBackground(Color.DARK_GRAY);
         contentArea.setForeground(Color.WHITE);
-        contentArea.setFont(new Font("Arial", Font.PLAIN, 12));
+        contentArea.setFont(new Font("Arial", Font.PLAIN, 18));
         contentArea.setEditable(false);
         add(contentArea, BorderLayout.CENTER);
     }
