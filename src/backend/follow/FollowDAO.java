@@ -67,5 +67,31 @@ public class FollowDAO {
         return followers;
     }
 	
+    //팔로워 수 조회
+    public int getFollowerCount(int followedUserId) throws SQLException{
+    	String query = "SELECT COUNT(*) AS followerCount FROM Follow WHERE followedUserId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, followedUserId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("followerCount");
+            }
+        }
+        return 0;
+    }
+    
+    //팔로잉 수 조회
+    public int getFollowingCount(int userId) throws SQLException {
+        String query = "SELECT COUNT(*) AS followingCount FROM Follow WHERE userId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("followingCount");
+            }
+        }
+        return 0; 
+    }
+
     
 }
