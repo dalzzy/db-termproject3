@@ -24,59 +24,58 @@ public class MyPage extends JFrame {
         profilePanel.setLayout(null); // 절대 위치
         profilePanel.setBackground(Color.BLACK);
 
-        // 상단 배경
+        // 상단 배경 패널 (배경색과 위치 설정)
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(Color.DARK_GRAY);
+        headerPanel.setBackground(new Color(30, 39, 50)); // 어두운 배경
         headerPanel.setBounds(200, 0, 800, 150);
         profilePanel.add(headerPanel);
 
         // 프로필 이미지
         JLabel profileImage = new JLabel();
-        profileImage.setBounds(250, 100, 100, 100); // 프로필 이미지 위치
-        profileImage.setIcon(resizeIcon(new ImageIcon("src/frontend/assets/default_profile.png"), 100, 100));
+        profileImage.setBounds(250, 100, 120, 120); // 프로필 이미지 위치 조정
+        profileImage.setIcon(resizeIcon(new ImageIcon("src/frontend/assets/default_profile.png"), 120, 120));
         profilePanel.add(profileImage);
 
         // 사용자 이름
         JLabel usernameLabel = new JLabel("Dahyeon");
         usernameLabel.setForeground(Color.WHITE);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        usernameLabel.setBounds(370, 120, 200, 30); // 이름 위치
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        usernameLabel.setBounds(250, 230, 300, 30); // 이름 위치 조정
         profilePanel.add(usernameLabel);
 
         // 사용자 아이디
         JLabel userIdLabel = new JLabel("@dalzzy");
         userIdLabel.setForeground(Color.GRAY);
-        userIdLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        userIdLabel.setBounds(370, 150, 200, 20); // 아이디 위치
+        userIdLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        userIdLabel.setBounds(250, 260, 300, 20); // 아이디 위치 조정
         profilePanel.add(userIdLabel);
 
         // Follower / Following 정보
-        JLabel followersLabel = new JLabel("30 Followers");
-        followersLabel.setForeground(Color.WHITE);
-        followersLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        followersLabel.setBounds(370, 180, 100, 20);
-        profilePanel.add(followersLabel);
-
-        JLabel followingLabel = new JLabel("10 Following");
-        followingLabel.setForeground(Color.WHITE);
-        followingLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        followingLabel.setBounds(470, 180, 100, 20);
+        JLabel followingLabel = new JLabel("11 Following");
+        followingLabel.setForeground(Color.GRAY);
+        followingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        followingLabel.setBounds(250, 290, 150, 20); // Following 위치 조정
         profilePanel.add(followingLabel);
+
+        JLabel followersLabel = new JLabel("29 Followers");
+        followersLabel.setForeground(Color.GRAY);
+        followersLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        followersLabel.setBounds(400, 290, 150, 20); // Followers 위치 조정
+        profilePanel.add(followersLabel);
 
         // "Edit Profile" 버튼
         EditProfileButton editProfileButton = new EditProfileButton(this); // 현재 프레임 전달
+        editProfileButton.setBounds(650, 200, 120, 30); // 버튼 위치 조정
         profilePanel.add(editProfileButton);
-
-
 
         // Posts / Likes Tabs
         JPanel tabPanel = new JPanel();
         tabPanel.setLayout(null);
         tabPanel.setBackground(Color.BLACK);
-        tabPanel.setBounds(200, 220, 800, 40);
+        tabPanel.setBounds(200, 330, 800, 40); // 탭 위치를 아래로 이동
 
         JLabel postsTab = new JLabel("Posts");
-        postsTab.setForeground(Color.CYAN); // 활성화된 탭
+        postsTab.setForeground(new Color(29, 155, 240)); // 활성화된 탭 색상
         postsTab.setFont(new Font("Arial", Font.BOLD, 16));
         postsTab.setBounds(250, 10, 100, 20);
         tabPanel.add(postsTab);
@@ -95,7 +94,7 @@ public class MyPage extends JFrame {
         mainContent.setLayout(new BoxLayout(mainContent, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(mainContent);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.setBounds(200, 260, 800, 500);
+        scrollPane.setBounds(200, 380, 800, 400); // 게시물 영역 위치 조정
 
         // 더미 게시물 추가
         for (int i = 1; i <= 5; i++) {
