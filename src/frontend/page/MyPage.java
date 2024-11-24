@@ -1,6 +1,7 @@
 package frontend.page;
 
 import frontend.component.NavBar;
+import frontend.component.EditProfileButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,15 +63,9 @@ public class MyPage extends JFrame {
         followingLabel.setBounds(470, 180, 100, 20);
         profilePanel.add(followingLabel);
 
-        // "Edit Profile" 버튼
-        JButton editProfileButton = new JButton("Edit Profile");
-        editProfileButton.setBounds(750, 120, 100, 30);
-        editProfileButton.setBackground(Color.BLACK);
-        editProfileButton.setForeground(Color.WHITE);
-        editProfileButton.setFocusPainted(false);
-        editProfileButton.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-        editProfileButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        EditProfileButton editProfileButton = new EditProfileButton();
         profilePanel.add(editProfileButton);
+
 
         // Posts / Likes Tabs
         JPanel tabPanel = new JPanel();
