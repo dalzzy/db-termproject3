@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class HomePage extends JFrame {
     private JPanel mainContent; // 메인 콘텐츠 영역
     private JTextField postInputField; // 게시물 입력 필드
@@ -105,12 +106,16 @@ public class HomePage extends JFrame {
         setVisible(true);
     }
 
+
+
     // 게시물 추가 메서드
     private void addPost(String username, String content) {
         PostItem postItem = new PostItem(username, content);
         postItem.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainContent.add(postItem);
-        mainContent.add(Box.createVerticalStrut(10)); // 게시물 간격
+
+        mainContent.add(Box.createVerticalStrut(10), 0);
+        mainContent.add(postItem, 0);
+
         mainContent.revalidate(); // 레이아웃 갱신
         mainContent.repaint(); // 화면 갱신
     }
