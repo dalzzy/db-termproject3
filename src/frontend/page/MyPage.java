@@ -24,16 +24,16 @@ public class MyPage extends JFrame {
         profilePanel.setLayout(null); // 절대 위치
         profilePanel.setBackground(Color.BLACK);
 
-        // 상단 배경 패널 (배경색과 위치 설정)
+
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(30, 39, 50)); // 어두운 배경
-        headerPanel.setBounds(200, 0, 800, 150);
+        headerPanel.setBackground(new Color(30, 39, 50));
+        headerPanel.setBounds(200, 0, 800, 120);
         profilePanel.add(headerPanel);
 
         // 프로필 이미지
         JLabel profileImage = new JLabel();
-        profileImage.setBounds(250, 100, 120, 120); // 프로필 이미지 위치 조정
-        profileImage.setIcon(resizeIcon(new ImageIcon("src/frontend/assets/default_profile.png"), 120, 120));
+        profileImage.setBounds(250, 120, 110, 120); // 프로필 이미지 위치 조정
+        profileImage.setIcon(resizeIcon(new ImageIcon("src/frontend/assets/profileImg.png"), 100, 100));
         profilePanel.add(profileImage);
 
         // 사용자 이름
@@ -96,7 +96,7 @@ public class MyPage extends JFrame {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBounds(200, 380, 800, 400); // 게시물 영역 위치 조정
 
-        // 더미 게시물 추가
+        // 더미 게시물
         for (int i = 1; i <= 5; i++) {
             JPanel post = new JPanel();
             post.setBackground(Color.DARK_GRAY);
