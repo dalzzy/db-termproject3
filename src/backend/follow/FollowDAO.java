@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FollowDAO {
-	private Connection connection;
+    private Connection connection;
 
     public FollowDAO(Connection connection) {
         this.connection = connection;
@@ -92,6 +92,4 @@ public class FollowDAO {
         }
         return 0; 
     }
-
-    
 }
