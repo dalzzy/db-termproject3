@@ -63,8 +63,10 @@ public class MyPage extends JFrame {
         followingLabel.setBounds(470, 180, 100, 20);
         profilePanel.add(followingLabel);
 
-        EditProfileButton editProfileButton = new EditProfileButton();
+        // "Edit Profile" 버튼
+        EditProfileButton editProfileButton = new EditProfileButton(this); // 현재 프레임 전달
         profilePanel.add(editProfileButton);
+
 
 
         // Posts / Likes Tabs
