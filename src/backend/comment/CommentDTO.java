@@ -1,12 +1,16 @@
 package backend.comment;
 
 public class CommentDTO {
-	private int commentId;
+
+    private int commentId;
+
     private int userId;
     private int postId;
     private String content;
     private String createdAt;
     private String updatedAt;
+
+    // Getters and setters
 
     public int getCommentId() {
         return commentId;
@@ -55,5 +59,5 @@ public class CommentDTO {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
-	
+
 }
