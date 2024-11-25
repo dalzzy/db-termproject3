@@ -61,5 +61,26 @@ public class UserDAO {
         }
         return Optional.empty(); 
     }
+	
+	//사용자 프로필 수정
+	public boolean updateUserProfile(int userId, String name, String gender) throws SQLException {
+        String query = "UPDATE User SET name = ?, gender = ? WHERE userId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            stmt.setString(2, gender);
+            stmt.setInt(3, userId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+	
+	//비밀번호 변경
+	public boolean updateUserPassword(int userId, String newPassword) throws SQLException {
+        String query = "UPDATE User SET password = ? WHERE userId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newPassword);
+            stmt.setInt(2, userId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }
 
