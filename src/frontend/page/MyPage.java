@@ -151,11 +151,11 @@ public class MyPage extends JFrame {
                     List<String> followingList = Arrays.asList("User1", "User2", "User3", "User4", "User5");
                     new FollowingPage(followingList); // FollowingPage로 이동
                 }
-//                else if (targetPage.equals("FollowersPage")) {
-//                    // 목데이터: 팔로워 사용자 목록
-//                    List<String> followersList = Arrays.asList("Follower1", "Follower2", "Follower3", "Follower4", "Follower5");
-//                    new FollowersPage(followersList); // FollowersPage로 이동
-//                }
+                else if (targetPage.equals("FollowersPage")) {
+                    // 목데이터: 팔로워 사용자 목록
+                    List<String> followersList = Arrays.asList("Follower1", "Follower2", "Follower3", "Follower4", "Follower5");
+                    new FollowersPage(followersList); // FollowersPage로 이동
+                }
             }
         });
     }
