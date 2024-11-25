@@ -39,17 +39,23 @@ public class PostItem extends JPanel {
         replyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         replyButton.setPreferredSize(new Dimension(80, 30));
 
-        // 답글 버튼 하단에 추가
+        // 답글 버튼과 답글 영역을 포함하는 패널
+        JPanel wrapperPanel = new JPanel();
+        wrapperPanel.setLayout(new BorderLayout());
+        wrapperPanel.setBackground(Color.DARK_GRAY);
+
+        // 답글 버튼을 왼쪽 정렬
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.setBackground(Color.DARK_GRAY);
         buttonPanel.add(replyButton);
-        add(buttonPanel, BorderLayout.SOUTH);
+        wrapperPanel.add(buttonPanel, BorderLayout.NORTH);
 
         // 답글 입력 영역
         replyPanel = new JPanel();
         replyPanel.setLayout(new BoxLayout(replyPanel, BoxLayout.Y_AXIS));
         replyPanel.setBackground(Color.BLACK);
+        wrapperPanel.add(replyPanel, BorderLayout.CENTER);
 
         // 버튼 클릭 이벤트: 답글 입력 창 표시
         replyButton.addActionListener(new ActionListener() {
@@ -101,6 +107,6 @@ public class PostItem extends JPanel {
             }
         });
 
-        add(replyPanel, BorderLayout.SOUTH);
+        add(wrapperPanel, BorderLayout.SOUTH);
     }
 }
