@@ -93,7 +93,7 @@ public class HomePage extends JFrame {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16); // 스크롤 속도 설정
         add(scrollPane, BorderLayout.CENTER);
 
-        // 초기 더미 게시물 추가
+        // 더미 데이터
         mainContent.add(new PostItem("User1", "Hi "));
         mainContent.add(Box.createVerticalStrut(10)); // 게시물 간격
         mainContent.add(new PostItem("User2", "Hello ~~~~"));

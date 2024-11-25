@@ -6,12 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PostItem extends JPanel {
-    private JPanel replyPanel; // 답글 영역
+    private JPanel replyPanel;
 
     public PostItem(String username, String content) {
         setLayout(new BorderLayout());
         setBackground(Color.DARK_GRAY);
-        setPreferredSize(new Dimension(800, 150)); // 게시물 크기
+        setPreferredSize(new Dimension(600, 150)); // 가로 크기를 600px로 줄임
         setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY)); // 게시물 경계선
 
         // 사용자 이름
@@ -66,7 +66,7 @@ public class PostItem extends JPanel {
                 replyField.setForeground(Color.WHITE);
                 replyField.setCaretColor(Color.WHITE);
                 replyField.setFont(new Font("Arial", Font.PLAIN, 14));
-                replyField.setMaximumSize(new Dimension(760, 30));
+                replyField.setMaximumSize(new Dimension(500, 30)); // 답글 입력 필드 크기 조정
 
                 JButton submitReplyButton = new JButton("Submit");
                 submitReplyButton.setBackground(new Color(29, 155, 240));

@@ -2,9 +2,14 @@ package frontend.page;
 
 import frontend.component.NavBar;
 import frontend.component.EditProfileButton;
+import frontend.component.ChangePwdModal;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.List;
 
 public class MyPage extends JFrame {
 
@@ -23,7 +28,6 @@ public class MyPage extends JFrame {
         JPanel profilePanel = new JPanel();
         profilePanel.setLayout(null); // 절대 위치
         profilePanel.setBackground(Color.BLACK);
-
 
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(new Color(30, 39, 50));
@@ -51,22 +55,31 @@ public class MyPage extends JFrame {
         profilePanel.add(userIdLabel);
 
         // Follower / Following 정보
-        JLabel followingLabel = new JLabel("11 Following");
+        JLabel followingLabel = new JLabel("10 Following");
         followingLabel.setForeground(Color.GRAY);
         followingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         followingLabel.setBounds(250, 290, 150, 20); // Following 위치 조정
         profilePanel.add(followingLabel);
 
-        JLabel followersLabel = new JLabel("29 Followers");
+        JLabel followersLabel = new JLabel("5 Followers");
         followersLabel.setForeground(Color.GRAY);
         followersLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         followersLabel.setBounds(400, 290, 150, 20); // Followers 위치 조정
         profilePanel.add(followersLabel);
 
+        // Following 및 Followers 호버 및 클릭 이벤트 추가
+        addHoverAndClickEvents(followingLabel, "FollowingPage");
+        addHoverAndClickEvents(followersLabel, "FollowersPage");
+
         // "Edit Profile" 버튼
         EditProfileButton editProfileButton = new EditProfileButton(this); // 현재 프레임 전달
         editProfileButton.setBounds(650, 200, 120, 30); // 버튼 위치 조정
         profilePanel.add(editProfileButton);
+
+        // 버튼 클릭 이벤트: 모달 표시
+        editProfileButton.addActionListener(e -> {
+            new ChangePwdModal(this); // 모달 표시
+        });
 
         // Posts / Likes Tabs
         JPanel tabPanel = new JPanel();
@@ -115,6 +128,36 @@ public class MyPage extends JFrame {
 
         // 프레임 표시
         setVisible(true);
+    }
+
+    // 호버 및 클릭 이벤트 추가 메서드
+    private void addHoverAndClickEvents(JLabel label, String targetPage) {
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                label.setText("<html><u>" + label.getText() + "</u></html>"); // 밑줄 추가
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                label.setText(label.getText().replace("<html><u>", "").replace("</u></html>", "")); // 밑줄 제거
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (targetPage.equals("FollowingPage")) {
+                    // 목데이터: 팔로잉 사용자 목록
+                    List<String> followingList = Arrays.asList("User1", "User2", "User3", "User4", "User5");
+                    new FollowingPage(followingList); // FollowingPage로 이동
+                }
+//                else if (targetPage.equals("FollowersPage")) {
+//                    // 목데이터: 팔로워 사용자 목록
+//                    List<String> followersList = Arrays.asList("Follower1", "Follower2", "Follower3", "Follower4", "Follower5");
+//                    new FollowersPage(followersList); // FollowersPage로 이동
+//                }
+            }
+        });
     }
 
     // 이미지 리사이즈 메서드
