@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MyPage extends JFrame {
 
@@ -166,10 +167,17 @@ public class MyPage extends JFrame {
                     List<String> followers = followService.getFollowers(userId)
                             .stream()
                             .map(f -> "User " + f.getUserId())
-                            .toList();
+                            .collect(Collectors.toList());
                     new FollowersPage(followers);
+                } else if (targetPage.equals("FollowingPage")) {
+                    List<String> following = followService.getFollowedUsers(userId)
+                            .stream()
+                            .map(f -> "User " + f.getFollowedUserId())
+                            .collect(Collectors.toList());
+                    new FollowingPage(following);
                 }
             }
+
         });
     }
 

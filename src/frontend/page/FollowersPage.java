@@ -1,21 +1,12 @@
 package frontend.page;
 
-import backend.db.DatabaseManager;
-import backend.follow.FollowDAO;
-import backend.follow.FollowService;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class FollowersPage extends JFrame {
-    private FollowService followService;
 
     public FollowersPage(List<String> followersList) {
-        followService = new FollowService(new FollowDAO(DatabaseManager.getInstance().getConnection()));
-
         // 프레임 설정
         setTitle("Followers");
         setSize(400, 600);
@@ -59,28 +50,7 @@ public class FollowersPage extends JFrame {
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         usernameLabel.setForeground(Color.WHITE);
 
-        JButton unfollowButton = new JButton("Unfollow");
-        unfollowButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        unfollowButton.setForeground(Color.WHITE);
-        unfollowButton.setBackground(new Color(220, 53, 69));
-        unfollowButton.setFocusPainted(false);
-        unfollowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        unfollowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Unfollowed " + user);
-                userPanel.setVisible(false);
-            }
-        });
-
         userPanel.add(usernameLabel);
-        userPanel.add(unfollowButton);
         return userPanel;
-    }
-
-    public static void main(String[] args) {
-        List<String> followersList = List.of("User1", "User2", "User3");
-        new FollowersPage(followersList);
     }
 }
