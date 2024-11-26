@@ -1,6 +1,7 @@
 package frontend.page;
 
 import backend.db.DatabaseManager;
+import backend.follow.FollowService;
 import backend.user.UserDTO;
 import backend.user.UserService;
 import frontend.component.NavBar;
@@ -11,18 +12,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class MyPage extends JFrame {
 
     private UserService userService; // UserService 인스턴스
+    private FollowService followService; // FollowService 인스턴스
     private int userId; // 조회할 유저 ID
 
     public MyPage(int userId) {
         // DatabaseManager를 통해 데이터베이스 연결 가져오기
         this.userService = new UserService(DatabaseManager.getInstance().getConnection());
+        this.followService = new FollowService(new backend.follow.FollowDAO(DatabaseManager.getInstance().getConnection()));
         this.userId = userId;
 
         // 프레임 속성 설정
@@ -64,21 +65,17 @@ public class MyPage extends JFrame {
             usernameLabel.setBounds(250, 230, 300, 30);
             profilePanel.add(usernameLabel);
 
-            // 사용자 ID 표시 (애초에 db에 사용자ID 필드가 없어서 이 부분은 그냥 하드코딩으로 넣어놓음)
-            JLabel userIdLabel = new JLabel("@dalzzy");
-            userIdLabel.setForeground(Color.GRAY);
-            userIdLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            userIdLabel.setBounds(250, 260, 300, 20); // 아이디 위치 조정
-            profilePanel.add(userIdLabel);
+            // 팔로잉 및 팔로워 수 동적으로 가져오기
+            int followingCount = followService.getFollowingCount(userId);
+            int followerCount = followService.getFollowerCount(userId);
 
-            // Follower / Following 정보
-            JLabel followingLabel = new JLabel("10 Following"); // TODO: 실제 데이터로 교체
+            JLabel followingLabel = new JLabel(followingCount + " Following");
             followingLabel.setForeground(Color.GRAY);
             followingLabel.setFont(new Font("Arial", Font.PLAIN, 16));
             followingLabel.setBounds(250, 290, 150, 20);
             profilePanel.add(followingLabel);
 
-            JLabel followersLabel = new JLabel("5 Followers"); // TODO: 실제 데이터로 교체
+            JLabel followersLabel = new JLabel(followerCount + " Followers");
             followersLabel.setForeground(Color.GRAY);
             followersLabel.setFont(new Font("Arial", Font.PLAIN, 16));
             followersLabel.setBounds(400, 290, 150, 20);
@@ -89,14 +86,12 @@ public class MyPage extends JFrame {
             addHoverAndClickEvents(followersLabel, "FollowersPage");
 
             // "Edit Profile" 버튼
-            EditProfileButton editProfileButton = new EditProfileButton(this); // 현재 프레임 전달
-            editProfileButton.setBounds(650, 200, 120, 30); // 버튼 위치 조정
+            EditProfileButton editProfileButton = new EditProfileButton(this);
+            editProfileButton.setBounds(650, 200, 120, 30);
             profilePanel.add(editProfileButton);
 
             // 버튼 클릭 이벤트: 모달 표시
-            editProfileButton.addActionListener(e -> {
-                new ChangePwdModal(this); // 모달 표시
-            });
+            editProfileButton.addActionListener(e -> new ChangePwdModal(this));
 
             // Posts / Likes Tabs
             JPanel tabPanel = new JPanel();
@@ -150,36 +145,30 @@ public class MyPage extends JFrame {
         setVisible(true);
     }
 
-    // 호버 및 클릭 이벤트 추가 메서드
     private void addHoverAndClickEvents(JLabel label, String targetPage) {
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                label.setText("<html><u>" + label.getText() + "</u></html>"); // 밑줄 추가
+                label.setText("<html><u>" + label.getText() + "</u></html>");
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                label.setText(label.getText().replace("<html><u>", "").replace("</u></html>", "")); // 밑줄 제거
+                label.setText(label.getText().replace("<html><u>", "").replace("</u></html>", ""));
             }
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (targetPage.equals("FollowingPage")) {
-                    // 목데이터: 팔로잉 사용자 목록
-                    List<String> followingList = Arrays.asList("User1", "User2", "User3", "User4", "User5");
-                    new FollowingPage(followingList); // FollowingPage로 이동
+                    JOptionPane.showMessageDialog(null, "Navigating to Following Page...");
                 } else if (targetPage.equals("FollowersPage")) {
-                    // 목데이터: 팔로워 사용자 목록
-                    List<String> followersList = Arrays.asList("Follower1", "Follower2", "Follower3", "Follower4", "Follower5");
-                    new FollowersPage(followersList); // FollowersPage로 이동
+                    JOptionPane.showMessageDialog(null, "Navigating to Followers Page...");
                 }
             }
         });
     }
 
-    // 이미지 리사이즈 메서드
     private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
         Image image = icon.getImage();
         Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
