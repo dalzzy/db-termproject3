@@ -35,24 +35,25 @@ public class FollowService {
     }
 
     //특정 사용자가 팔로우한 사용자 목록 조회
-    public List<FollowDTO> getFollowedUsers(int userId) {
-        try {
-            return followDAO.getFollowedUsers(userId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    public List<String> getFollowedUserNames(int userId) {
+    	try {
+        	return followDAO.getFollowedUserNames(userId);
+    	} catch (SQLException e) {
+       	 	e.printStackTrace();
+        	return null;
+    		}
+	}
+
 
     //특정 사용자를 팔로우하는 사용자 목록 조회
-    public List<FollowDTO> getFollowers(int followedUserId) {
-        try {
-            return followDAO.getFollowers(followedUserId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    public List<String> getFollowerNames(int followedUserId) {
+    	try {
+        	return followDAO.getFollowerNames(followedUserId);
+    	} catch (SQLException e) {
+        	e.printStackTrace();
+        	return null;
+    		}
+	}
 	    
     // 팔로워 수 조회
     public int getFollowerCount(int followedUserId) {

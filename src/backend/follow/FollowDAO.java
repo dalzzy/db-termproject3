@@ -32,40 +32,33 @@ public class FollowDAO {
     }
 
     // 특정 사용자가 팔로우하는 사용자 리스트 조회
-    public List<FollowDTO> getFollowedUsers(int userId) throws SQLException {
-        List<FollowDTO> followedUsers = new ArrayList<>();
-        String query = "SELECT * FROM Follow WHERE userId = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                FollowDTO follow = new FollowDTO();
-                follow.setFollowId(rs.getInt("followId"));
-                follow.setUserId(rs.getInt("userId"));
-                follow.setFollowedUserId(rs.getInt("followedUserId"));
-                followedUsers.add(follow);
-            }
-        }
-        return followedUsers;
-    }
+    public List<String> getFollowedUserNames(int userId) throws SQLException {
+   	 List<String> followedUserNames = new ArrayList<>();
+    	String query = "SELECT u.name " + "FROM Follow f " + "JOIN User u ON f.followedUserId = u.userId " + "WHERE f.userId = ?";
+   	 try (PreparedStatement stmt = connection.prepareStatement(query)) {
+     	   stmt.setInt(1, userId);
+      	  ResultSet rs = stmt.executeQuery();
+      	  while (rs.next()) {
+      	      followedUserNames.add(rs.getString("name"));
+    	    }
+  	  }
+   	 return followedUserNames;
+	}
+
 
     // 특정 사용자를 팔로우하는 사용자 리스트 조회
-    public List<FollowDTO> getFollowers(int followedUserId) throws SQLException {
-        List<FollowDTO> followers = new ArrayList<>();
-        String query = "SELECT * FROM Follow WHERE followedUserId = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, followedUserId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                FollowDTO follow = new FollowDTO();
-                follow.setFollowId(rs.getInt("followId"));
-                follow.setUserId(rs.getInt("userId"));
-                follow.setFollowedUserId(rs.getInt("followedUserId"));
-                followers.add(follow);
-            }
-        }
-        return followers;
-    }
+    public List<String> getFollowerNames(int followedUserId) throws SQLException {
+	List<String> followerNames = new ArrayList<>();
+   	String query = "SELECT u.name " + "FROM Follow f " + "JOIN User u ON f.userId = u.userId " + "WHERE f.followedUserId = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        	stmt.setInt(1, followedUserId);
+        	ResultSet rs = stmt.executeQuery();
+        	while (rs.next()) {
+            	followerNames.add(rs.getString("name"));
+        	}
+    	}
+    	return followerNames;
+	}
 	
     //팔로워 수 조회
     public int getFollowerCount(int followedUserId) throws SQLException{
