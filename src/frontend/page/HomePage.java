@@ -12,17 +12,15 @@ import frontend.component.PostItem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HomePage extends JFrame {
-    private JPanel mainContent;
-    private JTextField postInputField;
-    private int userId;
+    private JPanel mainContent; // 메인 콘텐츠 영역
+    private JTextField postInputField; // 게시물 입력 필드
+    private int userId; // 현재 로그인된 사용자 ID
     private PostService postService;
     private FollowService followService;
     private UserService userService;
@@ -30,23 +28,32 @@ public class HomePage extends JFrame {
     public HomePage(int userId) {
         this.userId = userId;
 
+        // 데이터베이스 연결 및 서비스 초기화
         Connection connection = DatabaseManager.getInstance().getConnection();
         this.postService = new PostService(connection);
         this.followService = new FollowService(new FollowDAO(connection));
         this.userService = new UserService(connection);
 
+        // 프레임 속성 설정
         setTitle("Home Page");
         setSize(1000, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // NavBar
         NavBar navBar = new NavBar(this, userId);
         add(navBar, BorderLayout.WEST);
 
+        // 게시물 작성 영역 생성 및 추가
         createPostPanel();
+
+        // 메인 콘텐츠 영역 생성 및 추가
         createMainContent();
+
+        // 팔로잉 사용자의 게시물 로드
         loadFollowingPosts();
 
+        // 프레임 표시
         setVisible(true);
     }
 
@@ -56,6 +63,7 @@ public class HomePage extends JFrame {
         postPanel.setLayout(null);
         postPanel.setPreferredSize(new Dimension(800, 100));
 
+        // 게시물 입력 필드
         postInputField = new JTextField() {
             private final String placeholder = "What's happening?!";
 
@@ -76,8 +84,10 @@ public class HomePage extends JFrame {
         postInputField.setCaretColor(Color.WHITE);
         postInputField.setFont(new Font("Arial", Font.PLAIN, 18));
         postInputField.setBounds(200, 30, 400, 40);
+        postInputField.setHorizontalAlignment(JTextField.LEFT);
         postPanel.add(postInputField);
 
+        // 게시 버튼
         JButton postButton = new JButton("Post");
         postButton.setBackground(new Color(29, 155, 240));
         postButton.setForeground(Color.WHITE);
@@ -87,14 +97,11 @@ public class HomePage extends JFrame {
         postButton.setBounds(630, 30, 80, 40);
         postPanel.add(postButton);
 
-        postButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String content = postInputField.getText().trim();
-                if (!content.isEmpty()) {
-                    addPostToDatabase(content);
-                    postInputField.setText("");
-                }
+        postButton.addActionListener(e -> {
+            String content = postInputField.getText().trim();
+            if (!content.isEmpty()) {
+                addPostToDatabase(content);
+                postInputField.setText("");
             }
         });
 
@@ -126,9 +133,8 @@ public class HomePage extends JFrame {
             for (int followingId : followingIds) {
                 List<PostDTO> posts = postService.getPostsByUserId(followingId);
                 for (PostDTO post : posts) {
-                    String username = userService.getUserById(post.getUserId())
-                            .map(UserDTO::getName)
-                            .orElse("Unknown User");
+                    Optional<UserDTO> userOpt = userService.getUserById(post.getUserId());
+                    String username = userOpt.map(UserDTO::getName).orElse("Unknown User");
                     addPost(username, post.getContent());
                 }
             }
@@ -144,15 +150,22 @@ public class HomePage extends JFrame {
             post.setContent(content);
             postService.addPost(post);
 
-            String username = userService.getUserById(userId).map(UserDTO::getName).orElse("Unknown User");
-            addPost(username, content);
+            String currentUsername = userService.getUserById(userId)
+                    .map(UserDTO::getName)
+                    .orElse("Unknown User");
+
+            addPost(currentUsername, content);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void addPost(String username, String content) {
-        PostItem postItem = new PostItem(username, content);
+    private void addPost(String postUsername, String content) {
+        String currentUsername = userService.getUserById(userId)
+                .map(UserDTO::getName)
+                .orElse("Unknown User");
+
+        PostItem postItem = new PostItem(postUsername, content, currentUsername);
         postItem.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         mainContent.add(Box.createVerticalStrut(10), 0);
