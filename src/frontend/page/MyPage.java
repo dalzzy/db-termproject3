@@ -88,13 +88,14 @@ public class MyPage extends JFrame {
             addHoverAndClickEvents(followersLabel, "FollowersPage");
 
             // "Edit Profile" 버튼
-            EditProfileButton editProfileButton = new EditProfileButton(this);
+            EditProfileButton editProfileButton = new EditProfileButton(this,userId);
             editProfileButton.setBounds(650, 200, 120, 30);
             profilePanel.add(editProfileButton);
 
             // 버튼 클릭 이벤트: 모달 표시
             editProfileButton.addActionListener(e -> {
-                new ChangePwdModal(this);
+                new ChangePwdModal(this,userId);
+
             });
 
             // Posts / Likes Tabs
