@@ -1,6 +1,7 @@
 package frontend.page;
 
 import backend.db.DatabaseManager;
+import backend.follow.FollowDAO;
 import backend.follow.FollowService;
 import backend.user.UserDTO;
 import backend.user.UserService;
@@ -12,21 +13,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.Optional;
 
 public class MyPage extends JFrame {
 
-    private UserService userService; // UserService 인스턴스
-    private FollowService followService; // FollowService 인스턴스
-    private int userId; // 조회할 유저 ID
+    private UserService userService;
+    private FollowService followService;
+    private int userId;
 
     public MyPage(int userId) {
-        // DatabaseManager를 통해 데이터베이스 연결 가져오기
         this.userService = new UserService(DatabaseManager.getInstance().getConnection());
-        this.followService = new FollowService(new backend.follow.FollowDAO(DatabaseManager.getInstance().getConnection()));
+        this.followService = new FollowService(new FollowDAO(DatabaseManager.getInstance().getConnection()));
         this.userId = userId;
 
-        // 프레임 속성 설정
+        // 프레임 설정
         setTitle("Profile Page");
         setSize(1000, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,7 +42,7 @@ public class MyPage extends JFrame {
         profilePanel.setLayout(null);
         profilePanel.setBackground(Color.BLACK);
 
-        // 유저 정보를 조회하여 표시
+        // 유저 정보 가져오기
         Optional<UserDTO> userOptional = userService.getUserById(userId);
         if (userOptional.isPresent()) {
             UserDTO user = userOptional.get();
@@ -65,7 +66,7 @@ public class MyPage extends JFrame {
             usernameLabel.setBounds(250, 230, 300, 30);
             profilePanel.add(usernameLabel);
 
-            // 팔로잉 및 팔로워 수 동적으로 가져오기
+            // Follower / Following 정보
             int followingCount = followService.getFollowingCount(userId);
             int followerCount = followService.getFollowerCount(userId);
 
@@ -81,7 +82,7 @@ public class MyPage extends JFrame {
             followersLabel.setBounds(400, 290, 150, 20);
             profilePanel.add(followersLabel);
 
-            // Following 및 Followers 호버 및 클릭 이벤트 추가
+            // Following 및 Followers 클릭 이벤트 추가
             addHoverAndClickEvents(followingLabel, "FollowingPage");
             addHoverAndClickEvents(followersLabel, "FollowersPage");
 
@@ -91,7 +92,9 @@ public class MyPage extends JFrame {
             profilePanel.add(editProfileButton);
 
             // 버튼 클릭 이벤트: 모달 표시
-            editProfileButton.addActionListener(e -> new ChangePwdModal(this));
+            editProfileButton.addActionListener(e -> {
+                new ChangePwdModal(this);
+            });
 
             // Posts / Likes Tabs
             JPanel tabPanel = new JPanel();
@@ -100,7 +103,7 @@ public class MyPage extends JFrame {
             tabPanel.setBounds(200, 330, 800, 40);
 
             JLabel postsTab = new JLabel("Posts");
-            postsTab.setForeground(new Color(29, 155, 240)); // 활성화된 탭 색상
+            postsTab.setForeground(new Color(29, 155, 240));
             postsTab.setFont(new Font("Arial", Font.BOLD, 16));
             postsTab.setBounds(250, 10, 100, 20);
             tabPanel.add(postsTab);
@@ -141,7 +144,6 @@ public class MyPage extends JFrame {
 
         add(profilePanel, BorderLayout.CENTER);
 
-        // 프레임 표시
         setVisible(true);
     }
 
@@ -160,10 +162,12 @@ public class MyPage extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (targetPage.equals("FollowingPage")) {
-                    JOptionPane.showMessageDialog(null, "Navigating to Following Page...");
-                } else if (targetPage.equals("FollowersPage")) {
-                    JOptionPane.showMessageDialog(null, "Navigating to Followers Page...");
+                if (targetPage.equals("FollowersPage")) {
+                    List<String> followers = followService.getFollowers(userId)
+                            .stream()
+                            .map(f -> "User " + f.getUserId())
+                            .toList();
+                    new FollowersPage(followers);
                 }
             }
         });
