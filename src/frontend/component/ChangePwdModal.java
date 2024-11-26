@@ -1,14 +1,21 @@
 package frontend.component;
 
+import backend.user.ProfileService;
+import backend.db.DatabaseManager;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 public class ChangePwdModal extends JDialog {
+    private int userId;
+    private ProfileService profileService;
 
-    public ChangePwdModal(JFrame parent) {
+    public ChangePwdModal(JFrame parent, int userId) {
         super(parent, "Change Password", true); // 부모 프레임과 모달 설정
+        this.userId = userId;
+        Connection connection = DatabaseManager.getInstance().getConnection();
+        this.profileService = new ProfileService(connection);
         initializeModal();
     }
 
@@ -50,23 +57,22 @@ public class ChangePwdModal extends JDialog {
         JButton cancelButton = new JButton("Cancel");
 
         // 저장 버튼 클릭 이벤트
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String currentPassword = new String(currentPasswordField.getPassword());
-                String newPassword = new String(newPasswordField.getPassword());
-                String confirmPassword = new String(confirmPasswordField.getPassword());
+        saveButton.addActionListener(e -> {
+            String currentPassword = new String(currentPasswordField.getPassword());
+            String newPassword = new String(newPasswordField.getPassword());
+            String confirmPassword = new String(confirmPasswordField.getPassword());
 
-                if (newPassword.equals(confirmPassword)) {
-                    JOptionPane.showMessageDialog(ChangePwdModal.this,
-                            "Password changed successfully!",
-                            "Success", JOptionPane.INFORMATION_MESSAGE);
-                    dispose(); // 모달 닫기
-                } else {
-                    JOptionPane.showMessageDialog(ChangePwdModal.this,
-                            "Passwords do not match!",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
+            if (!newPassword.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "Passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            boolean success = profileService.changePassword(userId, currentPassword, newPassword);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Password changed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                dispose(); // 모달 닫기
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to change password. Check your current password.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
