@@ -161,8 +161,14 @@ public class HomePage extends JFrame {
         }
     }
 
-    private void addPost(String username, String content) {
-        PostItem postItem = new PostItem(username, content, username);
+    private void addPost(String postUsername, String content) {
+        // 현재 로그인된 사용자의 이름 가져오기
+        String currentUsername = userService.getUserById(userId)
+                .map(UserDTO::getName)
+                .orElse("Unknown User");
+
+        // PostItem 생성 시 현재 사용자의 이름(currentUsername)을 전달
+        PostItem postItem = new PostItem(postUsername, content, currentUsername);
         postItem.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         mainContent.add(Box.createVerticalStrut(10), 0);
@@ -171,6 +177,7 @@ public class HomePage extends JFrame {
         mainContent.revalidate();
         mainContent.repaint();
     }
+
 
     public static void main(String[] args) {
         new HomePage(1);
