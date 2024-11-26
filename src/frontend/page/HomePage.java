@@ -14,8 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class HomePage extends JFrame {
     private JPanel mainContent; // 메인 콘텐츠 영역
@@ -125,16 +123,19 @@ public class HomePage extends JFrame {
 
     private void loadFollowingPosts() {
         try {
-            List<Integer> followingIds = followService.getFollowedUsers(userId)
-                    .stream()
-                    .map(f -> f.getFollowedUserId())
-                    .collect(Collectors.toList());
+            // FollowService를 사용하여 팔로잉한 사용자 이름 리스트 가져오기
+            List<String> followedUserNames = followService.getFollowedUserNames(userId);
 
-            for (int followingId : followingIds) {
-                List<PostDTO> posts = postService.getPostsByUserId(followingId);
+            // 팔로잉한 사용자들의 게시물 로드
+            for (String username : followedUserNames) {
+                // 해당 사용자 ID 가져오기
+                int followingUserId = userService.getUserByName(username)
+                        .map(UserDTO::getUserId)
+                        .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+                // 해당 사용자의 게시물 가져오기
+                List<PostDTO> posts = postService.getPostsByUserId(followingUserId);
                 for (PostDTO post : posts) {
-                    Optional<UserDTO> userOpt = userService.getUserById(post.getUserId());
-                    String username = userOpt.map(UserDTO::getName).orElse("Unknown User");
                     addPost(username, post.getContent());
                 }
             }
@@ -160,12 +161,8 @@ public class HomePage extends JFrame {
         }
     }
 
-    private void addPost(String postUsername, String content) {
-        String currentUsername = userService.getUserById(userId)
-                .map(UserDTO::getName)
-                .orElse("Unknown User");
-
-        PostItem postItem = new PostItem(postUsername, content, currentUsername);
+    private void addPost(String username, String content) {
+        PostItem postItem = new PostItem(username, content, username);
         postItem.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         mainContent.add(Box.createVerticalStrut(10), 0);

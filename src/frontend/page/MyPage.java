@@ -165,19 +165,14 @@ public class MyPage extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (targetPage.equals("FollowersPage")) {
-                    List<String> followers = followService.getFollowers(userId)
-                            .stream()
-                            .map(f -> "User " + f.getUserId())
-                            .collect(Collectors.toList());
+                    List<String> followers = followService.getFollowerNames(userId);
                     new FollowersPage(followers);
                 } else if (targetPage.equals("FollowingPage")) {
-                    List<String> following = followService.getFollowedUsers(userId)
-                            .stream()
-                            .map(f -> "User " + f.getFollowedUserId())
-                            .collect(Collectors.toList());
+                    List<String> following = followService.getFollowedUserNames(userId);
                     new FollowingPage(following);
                 }
             }
+
 
         });
     }
