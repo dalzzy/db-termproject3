@@ -8,12 +8,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class HomePage extends JFrame {
     private JPanel mainContent; // 메인 콘텐츠 영역
     private JTextField postInputField; // 게시물 입력 필드
+    private int userId; // 현재 로그인된 사용자 ID
 
-    public HomePage() {
+    public HomePage(int userId) {
+        this.userId = userId;
+
         // 프레임 속성 설정
         setTitle("Home Page");
         setSize(1000, 800);
@@ -21,10 +23,21 @@ public class HomePage extends JFrame {
         setLayout(new BorderLayout());
 
         // NavBar
-        NavBar navBar = new NavBar(this);
+        NavBar navBar = new NavBar(this, userId);
         add(navBar, BorderLayout.WEST);
 
-        // 상단 게시물 작성 영역
+        // 게시물 작성 영역 생성 및 추가
+        createPostPanel();
+
+        // 메인 콘텐츠 영역 생성 및 추가
+        createMainContent();
+
+        // 프레임 표시
+        setVisible(true);
+    }
+
+    // 게시물 작성 영역 생성 메서드
+    private void createPostPanel() {
         JPanel postPanel = new JPanel();
         postPanel.setBackground(Color.BLACK);
         postPanel.setLayout(null); // 절대 위치로 배치
@@ -50,10 +63,9 @@ public class HomePage extends JFrame {
         postInputField.setForeground(Color.WHITE);
         postInputField.setCaretColor(Color.WHITE); // 커서 색상
         postInputField.setFont(new Font("Arial", Font.PLAIN, 18));
-        postInputField.setBounds(200, 30, 400, 100); // 높이를 40으로 조정
+        postInputField.setBounds(200, 30, 400, 40); // 입력 필드 위치 및 크기 설정
         postInputField.setHorizontalAlignment(JTextField.LEFT); // 텍스트를 왼쪽 정렬
         postPanel.add(postInputField);
-
 
         // 게시 버튼
         JButton postButton = new JButton("Post");
@@ -71,7 +83,7 @@ public class HomePage extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String content = postInputField.getText().trim();
                 if (!content.isEmpty()) {
-                    addPost("User", content); // 게시물 추가
+                    addPost("User" + userId, content); // 게시물 추가
                     postInputField.setText(""); // 입력 필드 초기화
                 }
             }
@@ -84,29 +96,24 @@ public class HomePage extends JFrame {
         containerPanel.add(postPanel, BorderLayout.NORTH);
         containerPanel.add(Box.createVerticalStrut(20), BorderLayout.SOUTH); // 간격 추가
         add(containerPanel, BorderLayout.NORTH);
+    }
 
-        // 메인 콘텐츠 영역
+    // 메인 콘텐츠 영역 생성 메서드
+    private void createMainContent() {
         mainContent = new JPanel();
         mainContent.setBackground(Color.BLACK);
         mainContent.setLayout(new BoxLayout(mainContent, BoxLayout.Y_AXIS)); // 세로 방향 레이아웃
+
         JScrollPane scrollPane = new JScrollPane(mainContent); // 스크롤 추가
         scrollPane.getVerticalScrollBar().setUnitIncrement(16); // 스크롤 속도 설정
         add(scrollPane, BorderLayout.CENTER);
 
-        // 더미 데이터
-        mainContent.add(new PostItem("User1", "Hi "));
-        mainContent.add(Box.createVerticalStrut(10)); // 게시물 간격
-        mainContent.add(new PostItem("User2", "Hello ~~~~"));
-        mainContent.add(Box.createVerticalStrut(10)); // 게시물 간격
-        mainContent.add(new PostItem("User3", "user3's content "));
-        mainContent.add(Box.createVerticalStrut(10)); // 게시물 간격
-        mainContent.add(new PostItem("User4", "user4's content"));
-
-        // 프레임 표시
-        setVisible(true);
+        // 더미 데이터 추가
+        addPost("User1", "Hi ");
+        addPost("User2", "Hello ~~~~");
+        addPost("User3", "user3's content ");
+        addPost("User4", "user4's content");
     }
-
-
 
     // 게시물 추가 메서드
     private void addPost(String username, String content) {
@@ -121,6 +128,7 @@ public class HomePage extends JFrame {
     }
 
     public static void main(String[] args) {
-        new HomePage();
+        // 테스트용: userId 1로 페이지 실행
+        new HomePage(1);
     }
 }

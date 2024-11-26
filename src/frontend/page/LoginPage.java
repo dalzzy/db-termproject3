@@ -53,7 +53,7 @@ public class LoginPage extends JFrame {
                 if (authenticateUser(email, password)) {
                     JOptionPane.showMessageDialog(null, "Login successful! Redirecting to homepage...");
                     dispose(); // Close the login window
-                    new HomePage(); // Open homepage
+//                    new HomePage(); // Open homepage
                 } else {
                     JOptionPane.showMessageDialog(null, "Invalid email or password. Please try again.");
                 }

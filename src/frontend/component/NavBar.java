@@ -10,9 +10,11 @@ import java.awt.event.ActionListener;
 
 public class NavBar extends JPanel {
     private JFrame parentFrame;
+    private int userId;
 
-    public NavBar(JFrame parentFrame) {
+    public NavBar(JFrame parentFrame, int userId) {
         this.parentFrame = parentFrame;
+        this.userId = userId;
 
         // NavBar 속성 설정
         setPreferredSize(new Dimension(200, 0));
@@ -31,7 +33,7 @@ public class NavBar extends JPanel {
         // Home 버튼 추가
         JButton homeButton = createMenuButton("Home", () -> {
             parentFrame.dispose();
-            new HomePage();
+            new HomePage(userId);
         });
         add(homeButton);
 
@@ -41,7 +43,7 @@ public class NavBar extends JPanel {
         // Profile 버튼 추가
         JButton profileButton = createMenuButton("Profile", () -> {
             parentFrame.dispose();
-            new MyPage();
+            new MyPage(userId);
         });
         add(profileButton);
 

@@ -1,0 +1,123 @@
+<html>
+<head>
+<title>MyPage.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MyPage.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">frontend</span><span class="s2">.</span><span class="s1">page</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">backend</span><span class="s2">.</span><span class="s1">db</span><span class="s2">.</span><span class="s1">DatabaseManager</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">backend</span><span class="s2">.</span><span class="s1">user</span><span class="s2">.</span><span class="s1">UserDTO</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">backend</span><span class="s2">.</span><span class="s1">user</span><span class="s2">.</span><span class="s1">UserService</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">frontend</span><span class="s2">.</span><span class="s1">component</span><span class="s2">.</span><span class="s1">NavBar</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Optional</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">MyPage </span><span class="s0">extends </span><span class="s1">JFrame </span><span class="s2">{</span>
+
+    <span class="s0">private </span><span class="s1">UserService userService</span><span class="s2">; </span><span class="s3">// UserService 인스턴스</span>
+    <span class="s0">private int </span><span class="s1">userId</span><span class="s2">; </span><span class="s3">// 조회할 유저 ID</span>
+
+    <span class="s0">public </span><span class="s1">MyPage</span><span class="s2">(</span><span class="s0">int </span><span class="s1">userId</span><span class="s2">) {</span>
+        <span class="s3">// DatabaseManager를 통해 데이터베이스 연결 가져오기</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">userService </span><span class="s2">= </span><span class="s0">new </span><span class="s1">UserService</span><span class="s2">(</span><span class="s1">DatabaseManager</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">().</span><span class="s1">getConnection</span><span class="s2">());</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">userId </span><span class="s2">= </span><span class="s1">userId</span><span class="s2">;</span>
+
+        <span class="s3">// 프레임 속성 설정</span>
+        <span class="s1">setTitle</span><span class="s2">(</span><span class="s4">&quot;Profile Page&quot;</span><span class="s2">);</span>
+        <span class="s1">setSize</span><span class="s2">(</span><span class="s5">1000</span><span class="s2">, </span><span class="s5">800</span><span class="s2">);</span>
+        <span class="s1">setDefaultCloseOperation</span><span class="s2">(</span><span class="s1">JFrame</span><span class="s2">.</span><span class="s1">EXIT_ON_CLOSE</span><span class="s2">);</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s3">// NavBar</span>
+        <span class="s1">NavBar navBar </span><span class="s2">= </span><span class="s0">new </span><span class="s1">NavBar</span><span class="s2">(</span><span class="s0">this</span><span class="s2">,</span><span class="s1">userId</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">navBar</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">WEST</span><span class="s2">);</span>
+
+        <span class="s3">// 프로필 콘텐츠 영역</span>
+        <span class="s1">JPanel profilePanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+        <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+
+        <span class="s3">// 유저 정보를 조회하여 표시</span>
+        <span class="s1">Optional</span><span class="s2">&lt;</span><span class="s1">UserDTO</span><span class="s2">&gt; </span><span class="s1">userOptional </span><span class="s2">= </span><span class="s1">userService</span><span class="s2">.</span><span class="s1">getUserById</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">userOptional</span><span class="s2">.</span><span class="s1">isPresent</span><span class="s2">()) {</span>
+            <span class="s1">UserDTO user </span><span class="s2">= </span><span class="s1">userOptional</span><span class="s2">.</span><span class="s1">get</span><span class="s2">();</span>
+
+            <span class="s3">// 상단 배경</span>
+            <span class="s1">JPanel headerPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+            <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Color</span><span class="s2">(</span><span class="s5">30</span><span class="s2">, </span><span class="s5">39</span><span class="s2">, </span><span class="s5">50</span><span class="s2">));</span>
+            <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">setBounds</span><span class="s2">(</span><span class="s5">200</span><span class="s2">, </span><span class="s5">0</span><span class="s2">, </span><span class="s5">800</span><span class="s2">, </span><span class="s5">120</span><span class="s2">);</span>
+            <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">headerPanel</span><span class="s2">);</span>
+
+            <span class="s3">// 프로필 이미지</span>
+            <span class="s1">JLabel profileImage </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">();</span>
+            <span class="s1">profileImage</span><span class="s2">.</span><span class="s1">setBounds</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">120</span><span class="s2">, </span><span class="s5">110</span><span class="s2">, </span><span class="s5">120</span><span class="s2">);</span>
+            <span class="s1">profileImage</span><span class="s2">.</span><span class="s1">setIcon</span><span class="s2">(</span><span class="s1">resizeIcon</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s4">&quot;src/frontend/assets/profileImg.png&quot;</span><span class="s2">), </span><span class="s5">100</span><span class="s2">, </span><span class="s5">100</span><span class="s2">));</span>
+            <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">profileImage</span><span class="s2">);</span>
+
+            <span class="s3">// 사용자 이름</span>
+            <span class="s1">JLabel usernameLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s1">user</span><span class="s2">.</span><span class="s1">getName</span><span class="s2">());</span>
+            <span class="s1">usernameLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s1">usernameLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">22</span><span class="s2">));</span>
+            <span class="s1">usernameLabel</span><span class="s2">.</span><span class="s1">setBounds</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">230</span><span class="s2">, </span><span class="s5">300</span><span class="s2">, </span><span class="s5">30</span><span class="s2">);</span>
+            <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">usernameLabel</span><span class="s2">);</span>
+
+            <span class="s3">// 사용자 이메일 (아이디 대체)</span>
+            <span class="s1">JLabel userIdLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s1">user</span><span class="s2">.</span><span class="s1">getEmail</span><span class="s2">());</span>
+            <span class="s1">userIdLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GRAY</span><span class="s2">);</span>
+            <span class="s1">userIdLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">PLAIN</span><span class="s2">, </span><span class="s5">16</span><span class="s2">));</span>
+            <span class="s1">userIdLabel</span><span class="s2">.</span><span class="s1">setBounds</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">260</span><span class="s2">, </span><span class="s5">300</span><span class="s2">, </span><span class="s5">20</span><span class="s2">);</span>
+            <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">userIdLabel</span><span class="s2">);</span>
+
+            <span class="s3">// Follower / Following 정보 (목데이터)</span>
+            <span class="s1">JLabel followingLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;10 Following&quot;</span><span class="s2">); </span><span class="s3">// TODO: 실제 데이터로 교체</span>
+            <span class="s1">followingLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GRAY</span><span class="s2">);</span>
+            <span class="s1">followingLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">PLAIN</span><span class="s2">, </span><span class="s5">16</span><span class="s2">));</span>
+            <span class="s1">followingLabel</span><span class="s2">.</span><span class="s1">setBounds</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">290</span><span class="s2">, </span><span class="s5">150</span><span class="s2">, </span><span class="s5">20</span><span class="s2">);</span>
+            <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">followingLabel</span><span class="s2">);</span>
+
+            <span class="s1">JLabel followersLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;5 Followers&quot;</span><span class="s2">); </span><span class="s3">// TODO: 실제 데이터로 교체</span>
+            <span class="s1">followersLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GRAY</span><span class="s2">);</span>
+            <span class="s1">followersLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">PLAIN</span><span class="s2">, </span><span class="s5">16</span><span class="s2">));</span>
+            <span class="s1">followersLabel</span><span class="s2">.</span><span class="s1">setBounds</span><span class="s2">(</span><span class="s5">400</span><span class="s2">, </span><span class="s5">290</span><span class="s2">, </span><span class="s5">150</span><span class="s2">, </span><span class="s5">20</span><span class="s2">);</span>
+            <span class="s1">profilePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">followersLabel</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;User not found.&quot;</span><span class="s2">, </span><span class="s4">&quot;Error&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">profilePanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s3">// 프레임 표시</span>
+        <span class="s1">setVisible</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">// 이미지 리사이즈 메서드</span>
+    <span class="s0">private </span><span class="s1">ImageIcon resizeIcon</span><span class="s2">(</span><span class="s1">ImageIcon icon</span><span class="s2">, </span><span class="s0">int </span><span class="s1">width</span><span class="s2">, </span><span class="s0">int </span><span class="s1">height</span><span class="s2">) {</span>
+        <span class="s1">Image image </span><span class="s2">= </span><span class="s1">icon</span><span class="s2">.</span><span class="s1">getImage</span><span class="s2">();</span>
+        <span class="s1">Image resizedImage </span><span class="s2">= </span><span class="s1">image</span><span class="s2">.</span><span class="s1">getScaledInstance</span><span class="s2">(</span><span class="s1">width</span><span class="s2">, </span><span class="s1">height</span><span class="s2">, </span><span class="s1">Image</span><span class="s2">.</span><span class="s1">SCALE_SMOOTH</span><span class="s2">);</span>
+        <span class="s0">return new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">resizedImage</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">main</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">args</span><span class="s2">) {</span>
+        <span class="s3">// 예시: 1번 유저 프로필 조회</span>
+        <span class="s0">new </span><span class="s1">MyPage</span><span class="s2">(</span><span class="s5">1</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
