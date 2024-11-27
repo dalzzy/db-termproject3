@@ -1,19 +1,14 @@
 package frontend.page;
 
+import backend.db.DatabaseManager;  // Importing DatabaseManager to get the connection
+import backend.user.UserDAO;        // Importing UserDAO to handle user operations
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.*;
 
 public class SignUpPage extends JFrame {
-    // Database connection details
-    private final String DB_URL = "jdbc:mysql://localhost:3306/dbtermproject"; // 데이터베이스 주소
-    private final String DB_USER = "ieunju"; // 데이터베이스 사용자 이름
-    private final String DB_PASSWORD = "1234"; // 데이터베이스 비밀번호
-    private final String DB_DRIVER = "com.mysql.cj.jdbc.Driver"; // JDBC 드라이버 클래스 이름
 
     public SignUpPage() {
         setTitle("Signup Page");
@@ -54,12 +49,17 @@ public class SignUpPage extends JFrame {
                     return;
                 }
 
-                if (registerUser(email, username, password)) {
-                    JOptionPane.showMessageDialog(null, "Signup successful! Redirecting to login...");
-                    dispose(); // Close the current window
-                    new LoginPage(); // Open Login page
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error: Could not sign up. Please try again.");
+                try {
+                    if (registerUser(email, username, password)) {
+                        JOptionPane.showMessageDialog(null, "Signup successful! Redirecting to login...");
+                        dispose(); // Close the current window
+                        new LoginPage(); // Open Login page
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error: Could not sign up. Please try again.");
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error connecting to the database.");
+                    ex.printStackTrace();
                 }
             }
         });
@@ -76,28 +76,20 @@ public class SignUpPage extends JFrame {
         setVisible(true);
     }
 
-    // Register the user in the database
-    private boolean registerUser(String email, String username, String password) {
+    // Register the user in the database using UserDAO
+    private boolean registerUser(String email, String username, String password) throws SQLException {
         boolean isRegistered = false;
 
-        try {
-            // Load the database driver
-            Class.forName(DB_DRIVER);
+        // Establish a database connection using DatabaseManager
+        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+            // Create UserDAO instance
+            UserDAO userDAO = new UserDAO(conn);
 
-            // Connect to the database
-            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                String query = "INSERT INTO Users (Email, Username, Password) VALUES (?, ?, ?)";
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                pstmt.setString(1, email);
-                pstmt.setString(2, username);
-                pstmt.setString(3, password); // Note: Encrypt the password in production
-
-                int rowsInserted = pstmt.executeUpdate();
-                isRegistered = rowsInserted > 0; // Check if the insert was successful
-            }
+            // Register user using the UserDAO's registerUser method
+            isRegistered = userDAO.registerUser(username, email, password, "1990-01-01", "M"); // Replace with proper birthdate and gender
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error connecting to the database.");
+            JOptionPane.showMessageDialog(null, "Error during registration.");
         }
 
         return isRegistered;
@@ -107,4 +99,3 @@ public class SignUpPage extends JFrame {
         new SignUpPage();
     }
 }
-
