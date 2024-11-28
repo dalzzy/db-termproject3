@@ -50,4 +50,21 @@ public class UserService {
             return Optional.empty();
         }
     }
+
+    // 사용자 ID 조회 (name 기준)
+    public int getUserIdByName(String name) {
+        try {
+            return userDAO.getUserIdByName(name)
+                    .orElseThrow(() -> new UserNotFoundException("User not found: " + name));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1; // 예외 상황에서 -1 반환
+        }
+    }
+
+    public class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException(String message) {
+            super(message);
+        }
+    }
 }

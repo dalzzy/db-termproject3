@@ -24,7 +24,7 @@ public class FollowService {
         }
     }
 
-    //언팔로우
+    // 사용자 이름으로 언팔로우
     public boolean unfollowUser(int userId, int followedUserId) {
         try {
             return followDAO.removeFollow(userId, followedUserId);
@@ -33,6 +33,8 @@ public class FollowService {
             return false;
         }
     }
+
+
 
     //특정 사용자가 팔로우한 사용자 목록 조회
     public List<String> getFollowedUserNames(int userId) {
