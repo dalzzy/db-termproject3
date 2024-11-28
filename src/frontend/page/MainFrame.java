@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         // 창 설정
-        setTitle("Twitter");
+        setTitle("X");
         setSize(1000, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -19,35 +19,19 @@ public class MainFrame extends JFrame {
         JPanel topMenu = new JPanel();
         topMenu.setLayout(null);
         topMenu.setBackground(Color.WHITE);
-        topMenu.setBounds(0, 0, getWidth(), 70);
+        topMenu.setBounds(0, 0, 1000, 70); // 메뉴바 크기 고정
+        add(topMenu); // 상단 메뉴바 추가
 
         // 트위터 로고 추가
-        JLabel logoLabel = new JLabel(new ImageIcon("src/frontend/assets/XLogo.png"));
+        ImageIcon logoIcon = new ImageIcon("src/frontend/assets/XLogo.png");
+        JLabel logoLabel = new JLabel();
+        logoLabel.setIcon(new ImageIcon(logoIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH))); // 로고 크기 조정
         logoLabel.setBounds(20, 10, 50, 50);
         topMenu.add(logoLabel);
 
-        // 메뉴 아이콘 추가
-        String[] menuItems = {"Home", "Explore", "Notifications", "Messages"};
-        String[] iconPaths = {
-                "src/frontend/assets/home_icon.png",
-                "src/frontend/assets/explore_icon.png",
-                "src/frontend/assets/notification_icon.png",
-                "src/frontend/assets/message_icon.png"
-        };
-
-        int xOffset = 90;
-        for (int i = 0; i < menuItems.length; i++) {
-            JLabel menuLabel = new JLabel(menuItems[i], new ImageIcon(iconPaths[i]), JLabel.CENTER);
-            menuLabel.setBounds(xOffset, 10, 100, 50);
-            xOffset += 120;
-            topMenu.add(menuLabel);
-        }
-
-        add(topMenu);
-
         // 회원가입(Sign Up) 버튼
         Button signUpButton = new Button("Sign Up", new Color(29, 155, 240), Color.WHITE);
-        signUpButton.setBounds(getWidth() - 220, 10, 100, 40); // 상단 오른쪽
+        signUpButton.setBounds(770, 15, 100, 40); // 상단 오른쪽
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -59,7 +43,7 @@ public class MainFrame extends JFrame {
 
         // 로그인(Login) 버튼
         Button loginButton = new Button("Login", Color.BLACK, Color.WHITE);
-        loginButton.setBounds(getWidth() - 110, 10, 100, 40); // 상단 오른쪽
+        loginButton.setBounds(880, 15, 100, 40); // 상단 오른쪽
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,26 +53,8 @@ public class MainFrame extends JFrame {
         });
         topMenu.add(loginButton);
 
-        // 트윗 리스트 영역
-        JPanel tweetPanel = new JPanel();
-        tweetPanel.setLayout(new BoxLayout(tweetPanel, BoxLayout.Y_AXIS));
-        tweetPanel.setBackground(new Color(245, 248, 250));
-        tweetPanel.setBounds(0, 70, getWidth(), getHeight() - 140);
-
-        JScrollPane scrollPane = new JScrollPane(tweetPanel);
-        scrollPane.setBounds(0, 70, getWidth(), getHeight() - 140);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        add(scrollPane);
-
-        // 트윗 작성 버튼
-        Button tweetButton = new Button("", new Color(29, 155, 240), Color.WHITE);
-        tweetButton.setIcon(new ImageIcon("resources/tweet_button_icon.png"));
-        tweetButton.setBounds(getWidth() - 80, getHeight() - 80, 60, 60);
-        tweetButton.setBorderPainted(false);
-        add(tweetButton);
-
         // 배경색 설정
-        getContentPane().setBackground(Color.WHITE);
+        getContentPane().setBackground(Color.LIGHT_GRAY);
 
         // 창 보이기
         setVisible(true);
