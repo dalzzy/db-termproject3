@@ -1,5 +1,7 @@
 package backend.user;
 
+import backend.db.DatabaseManager;
+
 import java.sql.*;
 import java.util.Optional;
 
@@ -41,6 +43,11 @@ public class UserDAO {
     // 사용자 정보 조회 (userID 기준)
     // 성공시 사용자 정보 반환, 실패시 Empty Optional 반환
     public Optional<UserDTO> getUserById(int userId) throws SQLException {
+        // Connection이 유효한지 확인
+        if (connection == null || connection.isClosed()) {
+            connection = DatabaseManager.getInstance().getConnection();
+        }
+
         String query = "SELECT * FROM User WHERE userId = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, userId);
@@ -53,14 +60,12 @@ public class UserDAO {
                 user.setPassword(rs.getString("password"));
                 user.setBirthDate(rs.getDate("birthDate").toString());
                 user.setGender(rs.getString("gender"));
-                user.setNotificationSet(rs.getInt("notificationSet"));
-                user.setCreatedAt(rs.getTimestamp("createdAt").toString());
-                user.setUpdatedAt(rs.getTimestamp("updatedAt").toString());
                 return Optional.of(user);
             }
         }
         return Optional.empty();
     }
+
 
     // 사용자 이름으로 사용자 정보 조회
     public Optional<UserDTO> getUserByName(String name) throws SQLException {

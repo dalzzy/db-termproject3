@@ -26,8 +26,8 @@ public class LoginPage extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Username label and text field
-        JLabel userLabel = new JLabel("Username:");
+        // email label and text field
+        JLabel userLabel = new JLabel("Email:");
         userLabel.setForeground(Color.BLACK);
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -66,7 +66,7 @@ public class LoginPage extends JFrame {
                 String password = new String(passwordText.getPassword()).trim();
 
                 if (username.isEmpty() || password.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please enter both username and password.", "Login Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please enter both email and password.", "Login Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     try (Connection conn = DatabaseManager.getInstance().getConnection()) {
                         UserDAO userDAO = new UserDAO(conn); // Create an instance of UserDAO
@@ -74,9 +74,9 @@ public class LoginPage extends JFrame {
                         if (userId.isPresent()) {
                             JOptionPane.showMessageDialog(null, "Login successful! Redirecting to the main page...");
                             dispose(); // Close the login window
-                            new MainFrame(); // Redirect to main page
+                            new HomePage(userId.get()); // Redirect to main page
                         } else {
-                            JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Login Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Invalid email or password. Please try again.", "Login Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(null, "Database connection error.", "Error", JOptionPane.ERROR_MESSAGE);

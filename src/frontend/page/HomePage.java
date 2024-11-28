@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Optional;
 
 public class HomePage extends JFrame {
     private JPanel mainContent; // 메인 콘텐츠 영역
@@ -25,6 +26,7 @@ public class HomePage extends JFrame {
 
     public HomePage(int userId) {
         this.userId = userId;
+        System.out.println("Logged in userId: " + userId);
 
         // 데이터베이스 연결 및 서비스 초기화
         Connection connection = DatabaseManager.getInstance().getConnection();
@@ -147,19 +149,24 @@ public class HomePage extends JFrame {
     private void addPostToDatabase(String content) {
         try {
             PostDTO post = new PostDTO();
-            post.setUserId(userId);
+            post.setUserId(userId); // 로그인된 사용자의 userId 설정
             post.setContent(content);
             postService.addPost(post);
 
-            String currentUsername = userService.getUserById(userId)
-                    .map(UserDTO::getName)
-                    .orElse("Unknown User");
-
-            addPost(currentUsername, content);
+            // 게시물 작성자의 이름 가져오기
+            Optional<UserDTO> userOptional = userService.getUserById(userId);
+            if (userOptional.isPresent()) {
+                String currentUsername = userOptional.get().getName();
+                addPost(currentUsername, content);
+            } else {
+                System.err.println("Error: User not found for ID " + userId); // 디버깅 출력
+                addPost("Unknown User", content);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void addPost(String postUsername, String content) {
         // 현재 로그인된 사용자의 이름 가져오기
@@ -176,10 +183,5 @@ public class HomePage extends JFrame {
 
         mainContent.revalidate();
         mainContent.repaint();
-    }
-
-
-    public static void main(String[] args) {
-        new HomePage(1);
     }
 }
