@@ -1,5 +1,6 @@
 package frontend.page;
 
+
 import java.util.Optional;
 import backend.user.UserDAO; // Import the UserDAO class
 import backend.db.DatabaseManager; // Import the DatabaseManager class
@@ -65,6 +66,7 @@ public class LoginPage extends JFrame {
                 String username = userText.getText().trim();
                 String password = new String(passwordText.getPassword()).trim();
 
+
                 if (username.isEmpty() || password.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please enter both email and password.", "Login Error", JOptionPane.ERROR_MESSAGE);
                 } else {
@@ -111,6 +113,6 @@ public class LoginPage extends JFrame {
     }
 
     public static void main(String[] args) {
-        new LoginPage();
+        new LoginPage();  // Launch the Login Page
     }
 }
