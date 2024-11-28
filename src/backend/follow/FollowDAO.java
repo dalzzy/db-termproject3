@@ -21,15 +21,16 @@ public class FollowDAO {
         }
     }
 
-    // 팔로우 삭제 (언팔로우)
+    // 사용자 이름으로 언팔로우
     public boolean removeFollow(int userId, int followedUserId) throws SQLException {
         String query = "DELETE FROM Follow WHERE userId = ? AND followedUserId = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, userId);
             stmt.setInt(2, followedUserId);
-            return stmt.executeUpdate() > 0; 
+            return stmt.executeUpdate() > 0;
         }
     }
+
 
     // 특정 사용자가 팔로우하는 사용자 리스트 조회
     public List<String> getFollowedUserNames(int userId) throws SQLException {

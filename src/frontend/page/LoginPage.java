@@ -1,9 +1,9 @@
 package frontend.page;
 
-import backend.db.DatabaseManager;  // Backend DatabaseManager for connection
-import backend.user.UserDAO;  // Backend UserDAO for user-related queries
-import java.util.Optional;
 
+import java.util.Optional;
+import backend.user.UserDAO; // Import the UserDAO class
+import backend.db.DatabaseManager; // Import the DatabaseManager class
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,82 +13,103 @@ import java.sql.*;
 public class LoginPage extends JFrame {
 
     public LoginPage() {
-        setTitle("Login Page");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 200);
-        setLayout(new GridLayout(3, 2));
+        // Change all fonts to Arial
+        UIManager.put("Label.font", new Font("Arial", Font.BOLD, 14));
+        UIManager.put("Button.font", new Font("Arial", Font.PLAIN, 14));
+        UIManager.put("TextField.font", new Font("Arial", Font.PLAIN, 14));
+        UIManager.put("PasswordField.font", new Font("Arial", Font.PLAIN, 14));
 
-        // Components
-        JLabel emailLabel = new JLabel("Email:");
-        JTextField emailField = new JTextField();
+        // Main panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // email label and text field
+        JLabel userLabel = new JLabel("Email:");
+        userLabel.setForeground(Color.BLACK);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(userLabel, gbc);
+
+        JTextField userText = new JTextField(20);
+        userText.setBackground(Color.DARK_GRAY);
+        userText.setForeground(Color.WHITE);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panel.add(userText, gbc);
+
+        // Password label and text field
         JLabel passwordLabel = new JLabel("Password:");
-        JPasswordField passwordField = new JPasswordField();
+        passwordLabel.setForeground(Color.BLACK);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(passwordLabel, gbc);
+
+        JPasswordField passwordText = new JPasswordField(20);
+        passwordText.setBackground(Color.DARK_GRAY);
+        passwordText.setForeground(Color.WHITE);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panel.add(passwordText, gbc);
+
+        // Login button
         JButton loginButton = new JButton("Login");
-        JButton signupButton = new JButton("Go to Signup");
-
-        // Add components
-        add(emailLabel);
-        add(emailField);
-        add(passwordLabel);
-        add(passwordField);
-        add(loginButton);
-        add(signupButton);
-
-        // Login button action
+        loginButton.setBackground(Color.GRAY);
+        loginButton.setForeground(Color.WHITE);
+        loginButton.setPreferredSize(new Dimension(120, 35));
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String email = emailField.getText();
-                String password = new String(passwordField.getPassword());
+                String username = userText.getText().trim();
+                String password = new String(passwordText.getPassword()).trim();
 
-                if (email.isEmpty() || password.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Please fill all fields.");
-                    return;
-                }
 
-                try {
-                    if (authenticateUser(email, password)) {
-                        JOptionPane.showMessageDialog(null, "Login successful! Redirecting to homepage...");
-                        dispose(); // Close the login window
-                        new HomePage(1); // Open homepage or redirect
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Invalid email or password. Please try again.");
+                if (username.isEmpty() || password.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please enter both email and password.", "Login Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+                        UserDAO userDAO = new UserDAO(conn); // Create an instance of UserDAO
+                        Optional<Integer> userId = userDAO.loginUser(username, password);
+                        if (userId.isPresent()) {
+                            JOptionPane.showMessageDialog(null, "Login successful! Redirecting to the main page...");
+                            dispose(); // Close the login window
+                            new HomePage(userId.get()); // Redirect to main page
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Invalid email or password. Please try again.", "Login Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Database connection error.", "Error", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
                     }
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, "Error connecting to the database.");
-                    ex.printStackTrace();
                 }
             }
         });
 
-        // Signup button action
-        signupButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Close the current window
-                new SignUpPage(); // Open Signup page
-            }
-        });
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.add(loginButton);
 
+        // Add button panel to main panel
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
+
+        // Add main panel to frame
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
+
+        // Frame settings
+        setTitle("Login Page");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 300);
+        setLocationRelativeTo(null); // Center the window
         setVisible(true);
-    }
-
-    /**
-     * 사용자 인증 함수 (이메일, 비밀번호를 이용해 로그인)
-     * @param email 사용자가 입력한 이메일
-     * @param password 사용자가 입력한 비밀번호
-     * @return 인증 성공 여부
-     */
-    private boolean authenticateUser(String email, String password) throws SQLException {
-        // Get Database connection from DatabaseManager
-        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-            // UserDAO 인스턴스 생성 with the connection
-            UserDAO userDAO = new UserDAO(conn);
-
-            // 로그인 시도 (Returns userId if successful)
-            Optional<Integer> userId = userDAO.loginUser(email, password);
-            return userId.isPresent();  // 사용자 인증 성공 여부 반환
-        }
     }
 
     public static void main(String[] args) {
